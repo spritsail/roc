@@ -18,7 +18,7 @@ steps:
       repo: spritsail/roc
       tags:
         - latest
-        - "%label org.label-schema.version"
+        - "%label org.opencontainers.image.version"
       login: { from_secret: docker_login }
     when:
       branch:
@@ -37,7 +37,7 @@ steps:
     settings:
       username: { from_secret: docker_username }
       password: { from_secret: docker_password }
-      repo: spritsail/fivem
+      repo: spritsail/roc
     when:
       branch:
         - master
@@ -45,4 +45,6 @@ steps:
         - push
 ---
 kind: signature
-hmac: 58cb5a4646cdd02c5fdacaf0a8a7512af99f6e77d62b927ffe18352cec464d0c
+hmac: af8087bb882c0405ea239b9e2cb71dd1f748c39a47d75fe3969aec76c3586d23
+
+...
