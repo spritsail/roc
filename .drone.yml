@@ -11,15 +11,55 @@ steps:
     pull: always
     image: spritsail/docker-build
 
-  - name: publish
+  - name: publish-spritsail
     pull: always
-    image: spritsail/docker-publish
+    image: registry.spritsail.io/spritsail/docker-publish
     settings:
+      registry: registry.spritsail.io
+      login: { from_secret: spritsail_login }
       repo: spritsail/roc
       tags:
         - latest
-        - "%label org.opencontainers.image.version"
+        - "%label org.label-schema.version"
+      delete: no # so we can push to dockerhub+ghcr
+    depends_on:
+      - build
+    when:
+      branch:
+        - master
+      event:
+        - push
+
+  - name: publish-ghcr
+    pull: never
+    image: registry.spritsail.io/spritsail/docker-publish
+    settings:
+      registry: ghcr.io
+      login: { from_secret: ghcr_login }
+      repo: spritsail/roc
+      tags:
+        - latest
+        - "%label org.label-schema.version"
+      delete: no # so we can push to dockerhub
+    depends_on:
+      - build
+    when:
+      branch:
+        - master
+      event:
+        - push
+
+  - name: publish-dockerhub
+    pull: never
+    image: registry.spritsail.io/spritsail/docker-publish
+    settings:
       login: { from_secret: docker_login }
+      repo: spritsail/roc
+      tags:
+        - latest
+        - "%label org.label-schema.version"
+    depends_on:
+      - build
     when:
       branch:
         - master
@@ -45,6 +85,6 @@ steps:
         - push
 ---
 kind: signature
-hmac: af8087bb882c0405ea239b9e2cb71dd1f748c39a47d75fe3969aec76c3586d23
+hmac: 9ced2c55eb61f4c0c21aeae79a89188847f296027825cc3c2e5c66d7957aee69
 
 ...
